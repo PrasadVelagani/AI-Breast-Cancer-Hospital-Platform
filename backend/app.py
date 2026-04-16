@@ -40,11 +40,21 @@ if not os.path.exists(MODEL_PATH):
 
 print("Loading AI Model...")
 
-model = tf.keras.models.load_model(
-    MODEL_PATH,
-    compile=False,
-    safe_mode=False
-)
+from tensorflow.keras.models import load_model
+
+print("Loading AI Model...")
+
+try:
+    model = load_model(MODEL_PATH, compile=False)
+except Exception as e:
+    print("⚠️ Standard load failed, trying workaround...")
+
+    # 🔥 FIX: rebuild model without problematic config
+    model = tf.keras.models.load_model(
+        MODEL_PATH,
+        compile=False,
+        custom_objects=None
+    )
 
 print("Model Loaded Successfully!")
 
