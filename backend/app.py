@@ -3,6 +3,7 @@ import uuid
 import numpy as np
 import tensorflow as tf
 import cv2
+import gdown
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from tensorflow.keras.preprocessing import image
@@ -21,12 +22,21 @@ CORS(app)
 
 # ================= PATHS =================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "model", "model.h5")
+MODEL_DIR = os.path.join(BASE_DIR, "model")
+MODEL_PATH = os.path.join(MODEL_DIR, "model.h5")
+
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 REPORT_FOLDER = os.path.join(BASE_DIR, "reports")
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(REPORT_FOLDER, exist_ok=True)
+os.makedirs(MODEL_DIR, exist_ok=True)  # 🔥 important
+
+# ================= DOWNLOAD MODEL =================
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model from Google Drive...")
+    url = "https://drive.google.com/uc?id=1fcguwdoIdgHCcHABliMqm9aI6ViFTjw9"
+    gdown.download(url, MODEL_PATH, quiet=False)
 
 print("Loading AI Model...")
 model = tf.keras.models.load_model(MODEL_PATH, compile=False)
@@ -82,12 +92,7 @@ def generate_gradcam(img_array):
 
 # ================= PDF GENERATOR =================
 def create_pdf(data):
-    
-    # ✅ ONLY FIX: hospital name (DO NOT TOUCH ANYTHING ELSE)
-    hospital = data.get("hospitalName")
-    if not hospital:
-        hospital = "Hospital"
-
+    hospital = data.get("hospitalName") or "Hospital"
     doctor = data.get("doctorName", "Doctor")
     patient = data.get("patientName", "")
     age = data.get("age", "")
@@ -105,26 +110,16 @@ def create_pdf(data):
     filename = f"{patient}_report.pdf"
     pdf_path = os.path.join(REPORT_FOLDER, filename)
 
-    doc = SimpleDocTemplate(
-        pdf_path,
-        pagesize=letter,
-        rightMargin=40,
-        leftMargin=40,
-        topMargin=30,
-        bottomMargin=30
-    )
+    doc = SimpleDocTemplate(pdf_path, pagesize=letter)
 
     styles = getSampleStyleSheet()
     story = []
 
-    # ================= HEADER =================
     hospital_style = ParagraphStyle("hospital", alignment=TA_CENTER, fontSize=20)
     title_style = ParagraphStyle("title", alignment=TA_CENTER, fontSize=16)
 
-    # ✅ ONLY CHANGE HERE (hospital dynamic)
     story.append(Paragraph(f"<b>{hospital}</b>", hospital_style))
     story.append(Spacer(1,8))
-
     story.append(Paragraph("<b>AI DIAGNOSIS REPORT</b>", title_style))
     story.append(Spacer(1,8))
 
@@ -132,7 +127,6 @@ def create_pdf(data):
     story.append(Paragraph(f"<para align=right>{today}</para>", styles['Normal']))
     story.append(Spacer(1,20))
 
-    # ================= TABLE =================
     table_data = [
         ["Patient Name", patient],
         ["Age", age],
@@ -142,49 +136,25 @@ def create_pdf(data):
         ["Risk Level", risk],
     ]
 
-    table = Table(table_data, colWidths=[150, 300])
+    table = Table(table_data)
     table.setStyle(TableStyle([
-        ("BOX",(0,0),(-1,-1),1,colors.black),
-        ("INNERGRID",(0,0),(-1,-1),0.5,colors.grey),
+        ("GRID",(0,0),(-1,-1),1,colors.black),
         ("BACKGROUND",(0,0),(0,-1),colors.lightgrey),
-        ("PADDING",(0,0),(-1,-1),8),
     ]))
 
     story.append(table)
     story.append(Spacer(1,20))
 
-    # ================= IMAGES (RESTORED) =================
     if original_img and gradcam_img and os.path.exists(original_img) and os.path.exists(gradcam_img):
-        story.append(Paragraph("<para align=center><b>Original Image & GradCAM</b></para>", styles['Heading2']))
+        story.append(Paragraph("<b>Images</b>", styles['Heading2']))
         story.append(Spacer(1,10))
-
-        img_table = Table([
-            [
-                Image(original_img, 2.4*inch, 2.4*inch),
-                Image(gradcam_img, 2.4*inch, 2.4*inch)
-            ]
-        ])
+        img_table = Table([[Image(original_img,2*inch,2*inch), Image(gradcam_img,2*inch,2*inch)]])
         story.append(img_table)
-        story.append(Spacer(1,20))
 
-    # ================= DOCTOR SIGN =================
-    story.append(Paragraph(f"Doctor: <b>{doctor}</b>", styles['Normal']))
-    story.append(Spacer(1,25))
-    story.append(Paragraph("Signature: ____________________", styles['Normal']))
     story.append(Spacer(1,20))
-
-    # ================= DISCLAIMER =================
-    disclaimer = """
-    <para align=center>
-    <font size=8>
-    This AI-generated report is a clinical decision support tool. Final diagnosis must be confirmed by certified medical professionals.
-    </font>
-    </para>
-    """
-    story.append(Paragraph(disclaimer, styles['Normal']))
+    story.append(Paragraph(f"Doctor: {doctor}", styles['Normal']))
 
     doc.build(story)
-
     return filename
 
 # ================= PREDICT =================
@@ -213,39 +183,19 @@ def predict():
         "original": filename
     })
 
-# ================= GENERATE REPORT =================
+# ================= REPORT =================
 @app.route("/generate-report", methods=["POST"])
 def generate_report():
-    try:
-        data = request.json
+    data = request.json
+    pdf_name = create_pdf(data)
+    return jsonify({"pdf": pdf_name})
 
-        pdf_name = create_pdf(data)
-
-        return jsonify({
-            "pdf": pdf_name
-        })
-
-    except Exception as e:
-        print("PDF ERROR:", e)
-        return jsonify({"error": str(e)}), 500
-
-# ================= SERVE FILES =================
-@app.route("/uploads/<filename>")
-def serve_upload(filename):
-    path = os.path.join(UPLOAD_FOLDER, filename)
-
-    if os.path.exists(path):
-        return send_file(path)
-
-    return "Image not found", 404
-
+# ================= SERVE =================
 @app.route("/download/<filename>")
 def download_file(filename):
     path = os.path.join(REPORT_FOLDER, filename)
-
     if os.path.exists(path):
         return send_file(path, as_attachment=True)
-
     return "File not found", 404
 
 # ================= RUN =================
