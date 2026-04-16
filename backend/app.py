@@ -39,7 +39,13 @@ if not os.path.exists(MODEL_PATH):
     gdown.download(url, MODEL_PATH, quiet=False)
 
 print("Loading AI Model...")
-model = tf.keras.models.load_model(MODEL_PATH, compile=False)
+
+model = tf.keras.models.load_model(
+    MODEL_PATH,
+    compile=False,
+    safe_mode=False
+)
+
 print("Model Loaded Successfully!")
 
 # ================= IMAGE PREPROCESS =================
