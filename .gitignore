@@ -1,0 +1,46 @@
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+
+# DATASET ❌
+dataset/
+BreakHis*
+*.zip
+*.rar
+*.7z
+
+# MODEL ❌
+*.h5
+
+# OUTPUT ❌
+uploads/
+output_plots/
+
+# FRONTEND BUILD ❌
+build/
+dist/
+
+# OLD FILES ❌
+frontend_old/
+
+# ENV
+.env
+
+*.h5
+*.keras
+backend/model/
+
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+
+# dataset
+BreakHis*
+dataset/
+
+# optional
+uploads/
+reports/
+*.pdf

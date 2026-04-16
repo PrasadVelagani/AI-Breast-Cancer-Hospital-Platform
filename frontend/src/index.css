@@ -1,0 +1,283 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================= BODY ================= */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #020617, #0f172a, #020617);
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ================= INPUT ================= */
+.input,
+.input-dark {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.input::placeholder,
+.input-dark::placeholder {
+  color: #9ca3af;
+}
+
+.input:focus,
+.input-dark:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 10px rgba(59,130,246,0.3);
+}
+
+/* 🔥 FIX SELECT DROPDOWN ISSUE */
+.input-dark option {
+  background: #111827;
+  color: white;
+}
+
+/* ================= BUTTON ================= */
+.primary-btn {
+  display: inline-flex;            /* 🔥 FIX */
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  color: white;
+
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  width: auto;                    /* 🔥 VERY IMPORTANT */
+  transition: 0.3s;
+}
+
+.primary-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(59,130,246,0.5);
+}
+
+/* SUCCESS BUTTON */
+.btn-success {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  color: white;
+}
+
+/* DANGER BUTTON */
+.btn-danger {
+  background: #dc2626;
+  color: white;
+}
+
+/* ================= CARD ================= */
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 20px;
+}
+
+/* GLASS EFFECT */
+.glass-card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ================= TEXT ================= */
+.title-gradient {
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ================= HOVER EFFECT ================= */
+.glow:hover {
+  box-shadow: 0 0 20px rgba(59,130,246,0.4);
+}
+
+/* ================= SCROLLBAR ================= */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 10px;
+}
+
+/* ================= SMALL UTILITIES ================= */
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.primary-btn.full {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+}
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* 🔥 Hover Effect */
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(239,68,68,0.6);
+}
+
+/* 🔥 Click Effect */
+.logout-btn:active {
+  transform: scale(0.95);
+}
+/* 🔥 CARD HOVER EFFECT */
+.card-hover {
+  transition: 0.3s ease;
+  border-radius: 18px;
+}
+
+.card-hover:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(59,130,246,0.2);
+}
+
+/* 🔥 BUTTON PREMIUM */
+.btn-premium {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-premium:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 20px rgba(59,130,246,0.5);
+}
+
+/* 🔥 GLASS CARD */
+.glass-card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
+
+.glass-card:hover {
+  box-shadow: 0 0 30px rgba(59,130,246,0.2);
+}
+
+/* 🔥 INPUT */
+.input {
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.input:focus {
+  transform: scale(1.02);
+}
+.btn-premium:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(59,130,246,0.4);
+}
+/* 🔥 GRADIENT BUTTON */
+.btn-gradient {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(99,102,241,0.5);
+}
+
+/* 🔥 OUTLINE BUTTON */
+.btn-outline {
+  border: 1px solid white;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-outline:hover {
+  background: white;
+  color: #1e3a8a;
+}
+/* COMMON BUTTON */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 42px;
+  padding: 0 18px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  border-radius: 10px;
+  cursor: pointer;
+
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+/* DOWNLOAD */
+.download-btn {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+}
+
+.download-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #3b82f6;
+}
+
+/* COMPLETE */
+.complete-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+.complete-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #22c55e;
+}
